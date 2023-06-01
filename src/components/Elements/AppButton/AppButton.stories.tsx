@@ -1,6 +1,9 @@
 import React from 'react';
-import { AppButton, AppButtonPropsType } from './AppButton';
-import { Meta, Story } from '@storybook/react';
+
+import { AppButton } from './AppButton';
+
+import type { AppButtonPropsType } from './AppButton';
+import type { Meta, Story } from '@storybook/react';
 
 export default {
   title: 'AppButton',
