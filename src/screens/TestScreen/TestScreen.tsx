@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Button, TextInput, FlatList } from 'react-native';
 
+import { useSamples } from '@/features/sample';
 import { secureStore } from '@/lib/expo-secure-store';
 
 import type { RootStackParamList } from '../../navigation';
@@ -10,6 +11,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const TestScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'About'>>();
+
+  const samplesQuery = useSamples();
 
   const [testValue, setTestValue] = useState('');
 
@@ -34,6 +37,11 @@ export const TestScreen = () => {
       />
       <Text>test: {testValue}</Text>
       <Button title="testを取得する" onPress={getTestValue} />
+      <FlatList
+        data={samplesQuery.data}
+        renderItem={({ item }) => <Text>{item.name}</Text>}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 };
