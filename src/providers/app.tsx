@@ -4,6 +4,7 @@ import { Text, View, Button } from 'react-native';
 import ErrorBoundary from 'react-native-error-boundary';
 import { QueryClientProvider } from 'react-query';
 
+import { AuthProvider } from '@/lib/auth';
 import { queryClient } from '@/lib/react-query';
 
 interface FallbackProps {
@@ -31,7 +32,9 @@ type AppProviderProps = {
 export const AppProvider = ({ children }: AppProviderProps) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 };
