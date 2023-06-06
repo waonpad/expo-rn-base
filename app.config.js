@@ -34,6 +34,9 @@ const COMMON_CONFIGS = {
         UIBackgroundModes: ['location', 'fetch'],
       },
       bundleIdentifier: 'com.waonpad.helloworld',
+      config: {
+        usesNonExemptEncryption: false,
+      },
     },
     android: {
       package: 'com.waonpad.helloworld',

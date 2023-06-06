@@ -1,16 +1,17 @@
 import { APP_NAME } from '@/constants';
+import { secureStore } from '@/lib/expo-secure-store';
 
 const storagePrefix = `${APP_NAME}_`;
 
 const storage = {
   getToken: () => {
-    return JSON.parse(window.localStorage.getItem(`${storagePrefix}token`) as string);
+    return secureStore.get(`${storagePrefix}token`);
   },
   setToken: (token: string) => {
-    window.localStorage.setItem(`${storagePrefix}token`, JSON.stringify(token));
+    secureStore.save(`${storagePrefix}token`, token);
   },
   clearToken: () => {
-    window.localStorage.removeItem(`${storagePrefix}token`);
+    secureStore.delete(`${storagePrefix}token`);
   },
 };
 

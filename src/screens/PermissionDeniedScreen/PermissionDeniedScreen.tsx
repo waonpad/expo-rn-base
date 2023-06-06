@@ -6,28 +6,18 @@ import { StyleSheet, View, Text, Button } from 'react-native';
 import type { RootStackParamList } from '../../navigation';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export const AboutScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home' | 'Test' | 'Test2'>>();
+export const PermissionDeniedScreen = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home'>>();
 
   const onPress = () => {
     navigation.navigate('Home');
   };
 
-  const onPressTest = () => {
-    navigation.navigate('Test');
-  };
-
-  const onPressTest2 = () => {
-    navigation.navigate('Test2');
-  };
-
   return (
     <View style={styles.container}>
-      <Text>AboutScreen</Text>
+      <Text>PermissionDeniedScreen</Text>
+      <Text>アクセス権限がありません。</Text>
       <Button title="Home画面に遷移する" onPress={onPress} />
-      <Button title="Test画面に遷移する" onPress={onPressTest} />
-      <Button title="Test2画面に遷移する" onPress={onPressTest2} />
     </View>
   );
 };

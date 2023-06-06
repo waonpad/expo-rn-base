@@ -7,10 +7,8 @@ import storage from '@/utils/storage';
 import type { InternalAxiosRequestConfig } from 'axios';
 // AxiosRequestConfig → InternalAxiosRequestConfig
 
-function authRequestInterceptor(config: InternalAxiosRequestConfig) {
-  // TODO: RNってこういうトークンでいいの？
-
-  const token = storage.getToken();
+async function authRequestInterceptor(config: InternalAxiosRequestConfig) {
+  const token = await storage.getToken();
   if (token) {
     config.headers.authorization = `${token}`;
   }

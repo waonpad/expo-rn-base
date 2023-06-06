@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import create from 'zustand';
+import { create } from 'zustand';
 
 // おそらく書き直すファイル
 
