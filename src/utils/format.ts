@@ -5,4 +5,4 @@ import type { UserResponse } from '@/features/auth';
 
 export const formatDate = (date: number) => dayjs(date).format('MMMM D, YYYY h:mm A');
 
-export const omitToken = (user: UserResponse) => _.omit(user, ['accessToken', 'tokenType']);
+export const omitToken = (user: UserResponse) => _.omit(user, ['accessToken']);
