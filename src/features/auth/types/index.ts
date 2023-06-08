@@ -1,13 +1,13 @@
+import type { ROLES } from '@/types';
+
 export type AuthUser = {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  bio: string;
-  role: 'ADMIN' | 'USER';
+  username: string;
+  roles: ROLES[];
 };
 
 export type UserResponse = {
-  jwt: string;
-  user: AuthUser;
-};
+  accessToken: string;
+  tokenType: string;
+} & AuthUser;

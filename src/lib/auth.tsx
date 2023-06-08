@@ -1,67 +1,95 @@
-import { View, ActivityIndicator } from 'react-native';
-import { initReactQueryAuth } from 'react-query-auth';
+import React, { useEffect, useState } from 'react';
 
-import type {
-  UserResponse,
-  LoginCredentialsDTO,
-  RegisterCredentialsDTO,
-  AuthUser,
-} from '@/features/auth';
+import { useNavigation } from '@react-navigation/native';
+import { View, ActivityIndicator } from 'react-native';
+
+import type { LoginCredentialsDTO, RegisterCredentialsDTO, AuthUser } from '@/features/auth';
 import { loginWithEmailAndPassword, getUser, registerWithEmailAndPassword } from '@/features/auth';
+import type { RootStackParamList } from '@/navigation';
+import { omitToken } from '@/utils/format';
 import storage from '@/utils/storage';
 
-async function handleUserResponse(data: UserResponse) {
-  const { jwt, user } = data;
-  storage.setToken(jwt);
-  return user;
-}
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-async function loadUser() {
-  const token = await storage.getToken();
-
-  if (token) {
-    const data = await getUser();
-    return data;
+function createCtx<ContextType>() {
+  const ctx = React.createContext<ContextType | undefined>(undefined);
+  function useCtx() {
+    const c = React.useContext(ctx);
+    if (!c) throw new Error('useCtx must be inside a Provider with a value');
+    return c;
   }
-  return null;
+  return [useCtx, ctx.Provider] as const;
 }
 
-async function loginFn(data: LoginCredentialsDTO) {
-  const response = await loginWithEmailAndPassword(data);
-  const user = await handleUserResponse(response);
-  return user;
-}
+const [createdUseAuth, SetAuthProvider] = createCtx<ReturnType<typeof useAuthCtx>>();
 
-async function registerFn(data: RegisterCredentialsDTO) {
-  const response = await registerWithEmailAndPassword(data);
-  const user = await handleUserResponse(response);
-  return user;
-}
-
-async function logoutFn() {
-  storage.clearToken();
-  window.location.assign(window.location.origin as unknown as string);
-}
-
-const authConfig = {
-  loadUser,
-  loginFn,
-  registerFn,
-  logoutFn,
-  LoaderComponent() {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const auth = useAuthCtx();
+  if (auth.load) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );
-  },
+  } else {
+    return <SetAuthProvider value={auth}>{children}</SetAuthProvider>;
+  }
 };
 
-// https://zenn.dev/taumu/articles/9a979429fde590
+export const useAuth = createdUseAuth;
 
-export const { AuthProvider, useAuth } = initReactQueryAuth<
-  AuthUser | null,
-  unknown,
-  LoginCredentialsDTO,
-  RegisterCredentialsDTO
->(authConfig);
+const useAuthCtx = () => {
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  const [load, setLoad] = useState(true);
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home'>>();
+
+  const register = async (data: RegisterCredentialsDTO) => {
+    const response = await registerWithEmailAndPassword(data);
+
+    setUser(omitToken(response));
+    storage.setToken(response.accessToken);
+  };
+
+  const login = async (data: LoginCredentialsDTO) => {
+    const response = await loginWithEmailAndPassword(data);
+
+    setUser(omitToken(response));
+    storage.setToken(response.accessToken);
+  };
+
+  const logout = () => {
+    setUser(null);
+    storage.clearToken();
+
+    navigation.navigate('Home');
+  };
+
+  const loadUser = async () => {
+    const token = await storage.getToken();
+
+    if (token) {
+      const data = await getUser();
+
+      setUser(data);
+      setLoad(false);
+      return data;
+    }
+
+    setLoad(false);
+    return null;
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  return {
+    user,
+    register,
+    login,
+    logout,
+    load,
+  };
+};
