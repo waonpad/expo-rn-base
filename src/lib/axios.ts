@@ -10,7 +10,7 @@ import type { InternalAxiosRequestConfig } from 'axios';
 async function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   const token = await storage.getToken();
   if (token) {
-    config.headers.authorization = `${token}`;
+    config.headers.authorization = `Bearer ${token}`;
   }
   config.headers.Accept = 'application/json';
   return config;

@@ -14,7 +14,7 @@ export type RootStackParamList = {
   Home: undefined;
   About: undefined;
   Test: undefined;
-  Test2: undefined;
+  Test2: undefined; // PermissionDeniedTest
   PermissionDenied: undefined;
 };
 
